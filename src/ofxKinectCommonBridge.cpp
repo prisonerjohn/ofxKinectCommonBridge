@@ -454,6 +454,13 @@ bool ofxKinectCommonBridge::initSensor( int id )
 		return false;
 	}
 
+	// get the port ID from the simple api
+	const WCHAR* wcPortID = KinectGetPortID(hKinect);
+
+	// create an instance of the same sensor
+	HRESULT hr = NuiCreateSensorById(wcPortID, &nuiSensor);
+	nuiSensor->NuiGetCoordinateMapper(&mapper);
+
 	if(ofGetCurrentRenderer()->getType() == ofGLProgrammableRenderer::TYPE)
 	{
 		bProgrammableRenderer = true;
@@ -467,16 +474,7 @@ bool ofxKinectCommonBridge::initDepthStream( int width, int height, bool nearMod
 
 	mappingDepthToColor = mapDepthToColor;
 
-	if (mappingDepthToColor)
-	{
-		// get the port ID from the simple api
-		const WCHAR* wcPortID = KinectGetPortID(hKinect);
 
-		// create an instance of the same sensor
-		INuiSensor* nuiSensor = nullptr;
-		HRESULT hr = NuiCreateSensorById(wcPortID, &nuiSensor);
-		nuiSensor->NuiGetCoordinateMapper(&mapper);
-	}
 
 	if(bStarted){
 		ofLogError("ofxKinectCommonBridge::initDepthStream") << " Cannot configure once the sensor has already started";
@@ -538,21 +536,6 @@ bool ofxKinectCommonBridge::initDepthStream( int width, int height, bool nearMod
 bool ofxKinectCommonBridge::initColorStream( int width, int height, bool mapColorToDepth )
 {
 	mappingColorToDepth = mapColorToDepth;
-	if(mappingColorToDepth && mapper == NULL) 
-	{
-		/*
-		// get the port ID from the simple api
-		const WCHAR* wcPortID = KinectGetPortID(hKinect);
-
-		// create an instance of the same sensor
-		INuiSensor* nuiSensor = nullptr;
-		HRESULT hr = NuiCreateSensorById(wcPortID, &nuiSensor);
-
-		nuiSensor->NuiGetCoordinateMapper(&mapper);
-		*/
-
-		ofLogWarning("ofxKinectCommonBridge::initColorStream") << " mapping color to depth is not yet supported " << endl;
-	}
 
 	if(bStarted){
 		ofLogError("ofxKinectCommonBridge::initColorStream") << " Cannot configure once the sensor has already started";
