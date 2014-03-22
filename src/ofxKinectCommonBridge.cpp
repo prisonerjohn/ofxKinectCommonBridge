@@ -87,6 +87,9 @@ ofxKinectCommonBridge::ofxKinectCommonBridge(){
 	bUsingSkeletons = false;
   	bUseTexture = true;
 	bProgrammableRenderer = false;
+
+	sensorAngle = 0;
+	targetSensorAngle = 0;
 	
 	setDepthClipping();
 }
@@ -328,6 +331,16 @@ ofShortPixels & ofxKinectCommonBridge::getRawDepthPixelsRef(){
 //------------------------------------
 void ofxKinectCommonBridge::setUseTexture(bool bUse){
 	bUseTexture = bUse;
+}
+
+//------------------------------------
+int ofxKinectCommonBridge::getSensorAngle(){
+	return sensorAngle;
+}
+
+//------------------------------------
+void ofxKinectCommonBridge::setSensorAngle(int angle){
+	targetSensorAngle = angle;
 }
 
 //----------------------------------------------------------
@@ -750,6 +763,19 @@ void ofxKinectCommonBridge::threadedFunction(){
 			if( KinectIsSkeletonFrameReady(hKinect) && SUCCEEDED ( KinectGetSkeletonFrame(hKinect, &k4wSkeletons )) ) 
 			{
 				bNeedsUpdateSkeleton = true;
+			}
+		}
+
+		// Tilt if necessary
+		if (nuiSensor) {
+			//LONG angle = 0;
+			//if (SUCCEEDED(nuiSensor->NuiCameraElevationGetAngle(&angle))) {
+			//	sensorAngle = angle;
+			//}
+
+			if (sensorAngle != targetSensorAngle) {
+				nuiSensor->NuiCameraElevationSetAngle(targetSensorAngle);
+				sensorAngle = targetSensorAngle;
 			}
 		}
 

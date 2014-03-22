@@ -78,6 +78,9 @@ class ofxKinectCommonBridge : protected ofThread {
 	/// enable/disable frame loading into textures on update()
 	void setUseTexture(bool bUse);
 
+	int getSensorAngle();
+	void setSensorAngle(int ang);
+
 	/// draw the video texture
 	void draw(float x, float y, float w, float h);
 	void draw(float x, float y);
@@ -132,6 +135,7 @@ class ofxKinectCommonBridge : protected ofThread {
 	void updateIRPixels();
 	bool bNearWhite;
 	float nearClipping, farClipping;
+	int sensorAngle, targetSensorAngle;
 
   	bool bUseTexture;
 	ofTexture depthTex; ///< the depth texture
